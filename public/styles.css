@@ -9,6 +9,9 @@ body {
 
 }
 
+h1{
+  text-align: center;
+}
 .container {
   max-width: 800px;
   margin: 0 auto;
@@ -66,7 +69,7 @@ button {
 .complete {
   margin: 10px;
   font-weight: bold;
-  color: rgb(188, 186, 186);
+  color: rgb(216, 216, 216);
 }
 
 .todo-column {
@@ -77,6 +80,13 @@ button {
   margin: 20px;
   display: block;
 
+}
+.deleteAll{
+  font-size: 16px;
+  font-weight: bold;
+  color: #555;
+  border-radius: 12px;
+  padding: 4px;
 }
 
 .todo-item {
@@ -166,4 +176,18 @@ p, del {
 .rounded-checkbox:checked {
   background-color: green; /* Change background color when checkbox is checked */
   border-color: green; /* Change border color when checkbox is checked */
+}
+
+span{
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  color: #555;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+}
+span:hover, .deleteAll:hover{
+  background: #d7d7d7;
 }
