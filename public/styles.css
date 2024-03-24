@@ -6,6 +6,7 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
   margin: 16px;
+
 }
 
 .container {
@@ -36,6 +37,7 @@ body {
   width: 90%;
   height: 100%;
   font-size: 18px;
+  margin-left: 20px;
 }
 
 .icon-header {
@@ -55,7 +57,7 @@ button {
 } 
 
 .header-todo {
-  margin: 30px;
+  margin-top: 30px;
   display: flex;
 }
 
@@ -71,12 +73,16 @@ button {
   background-color: rgb(242, 242, 242);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
   border-radius: 12px;
+  height: 60px;
+  margin: 20px;
+  display: block;
+
 }
 
 .todo-item {
-  height: 60px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin: 20px;
 }
 
@@ -88,51 +94,76 @@ p, del {
 
 }
 
-
-.checkbox {
+/* .checkbox {
   height: 26px;
   width: 26px;
   background-color: rgb(255, 255, 255);
   border-radius: 50%;
-
-
   appearance: none;
   -webkit-appearance: none;
-
   cursor: pointer;
-}
+  aspect-ratio: 1/1; 
+} */
 
 
-.note {
-  flex: 1;
-  margin: 0;
-}
+
 
 .date {
-
   padding: 3px;
   font-family: Arial, Helvetica, sans-serif;
   border: none;
   color: #999;
+  font-size: 14px;
+
 }
 
-.date::-webkit-inner-spin-button {
-  display: none;
-}
-
-.date::placeholder {
-  visibility: hidden;
-}
-
-.date::before {
-  content: 'Due Date';
-  color: #999;
-}
 
 
 #todo{
 
+}
+
+.date::-webkit-inner-spin-button {
+  display: block; /* Show the inner spin button by default */
+}
+
+.date::placeholder {
+  visibility: visible; /* Make the placeholder visible by default */
+}
+
+.date::before {
+  content: none; /* Hide the 'Due Date' text by default */
+}
+
+/* Media query for mobile devices */
+@media (max-width: 600px) {
+  .date::-webkit-inner-spin-button {
+    display: none; /* Hide the inner spin button on mobile view */
+  }
+  
+  .date::placeholder {
+    visibility: hidden; /* Hide the placeholder on mobile view */
+
+  }
+  
+
 
 }
 
+.rounded-checkbox {
+  /* Apply styles for a rounded checkbox */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  outline: none;
+  cursor: pointer;
+}
 
+.rounded-checkbox:checked {
+  background-color: green; /* Change background color when checkbox is checked */
+  border-color: green; /* Change border color when checkbox is checked */
+}
