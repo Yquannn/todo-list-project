@@ -1,9 +1,9 @@
-const savedNotes = localStorage.getItem('notes');
-const savedCompletedNotes = localStorage.getItem('completedNotes');
 document.addEventListener('DOMContentLoaded', function () {
   const main = document.getElementById("todo");
   const completeTodo = document.getElementById("complete");
-  const completedTasks = [];
+
+  const savedNotes = JSON.parse(localStorage.getItem('notes')) || [];
+  const savedCompletedNotes = JSON.parse(localStorage.getItem('completedNotes')) || [];
 
   document.getElementById('add-todo').addEventListener('click', addTodo);
 
@@ -14,163 +14,105 @@ document.addEventListener('DOMContentLoaded', function () {
     if (inputItem === '') {
       alert('Add todo');
     } else {
-      const divContainer = document.createElement('div');
-      divContainer.setAttribute('class', 'todo-column');
-      const divColumn = document.createElement('div');
-      divColumn.setAttribute('class', 'todo-item');
-
-      const inputCheckbox = document.createElement('input');
-      inputCheckbox.setAttribute('class', 'checkbox');
-      inputCheckbox.setAttribute('type', 'checkbox');
-      inputCheckbox.addEventListener('click', markAsComplete);
-
-      const note = document.createElement('p');
-      const value = inputItem.trim();
-      note.textContent = value;
-
-      const date = document.createElement('input');
-      date.setAttribute('class', 'date');
-      date.setAttribute('type', 'date');
-
-      divColumn.appendChild(inputCheckbox);
-      divColumn.appendChild(note);
-      divColumn.appendChild(date);
-
-      divContainer.appendChild(divColumn);
-      main.appendChild(divContainer);
-
+      const noteText = inputItem.trim();
+      const todoItem = createTodoItem(noteText);
+      main.appendChild(todoItem.container);
       document.querySelector('.input').value = '';
-
+      todoItem.checkbox.addEventListener('click', markAsComplete);
       saveNotes();
     }
   }
 
-  function markAsComplete() {
+  function createTodoItem(noteText) {
     const divContainer = document.createElement('div');
-    divContainer.setAttribute('class', 'todo-column');
+    divContainer.classList.add('todo-column');
+
     const divColumn = document.createElement('div');
-    divColumn.setAttribute('class', 'todo-item');
+    divColumn.classList.add('todo-item');
+
+    const roundDiv = document.createElement('div');
+    roundDiv.classList.add('round');
 
     const inputCheckbox = document.createElement('input');
-    inputCheckbox.setAttribute('class', 'checkbox');
     inputCheckbox.setAttribute('type', 'checkbox');
-    inputCheckbox.checked = true;
+    inputCheckbox.setAttribute('id', 'checkbox');
+    inputCheckbox.classList.add('rounded-checkbox');
 
-    const note = document.createElement('p');
-    note.textContent = this.nextSibling.textContent;
+    inputCheckbox.addEventListener('click', () => {
+      window.location.reload();
+    });
+    
+
+    const label = document.createElement('label');
+    label.setAttribute('for', 'checkbox');
+
+    const noteElement = document.createElement('p');
+    noteElement.textContent = noteText;
 
     const date = document.createElement('input');
-    date.setAttribute('class', 'date');
+    date.classList.add('date');
     date.setAttribute('type', 'date');
 
-    divColumn.appendChild(inputCheckbox);
-    divColumn.appendChild(note);
+    roundDiv.appendChild(inputCheckbox);
+    roundDiv.appendChild(label);
+
+    divColumn.appendChild(roundDiv);
+    divColumn.appendChild(noteElement);
     divColumn.appendChild(date);
 
     divContainer.appendChild(divColumn);
-    completeTodo.appendChild(divContainer);
 
-    // Add the task to the completedTasks array
-    completedTasks.push(note.textContent);
-
-    // Remove the task from the todo section
-    this.parentElement.remove();
-    
-    saveNotes();
-  }
-
-  function deleteNote() {
-    this.parentElement.remove();
-    saveNotes();
+    return { container: divContainer, checkbox: inputCheckbox };
   }
 
   function saveNotes() {
-    const notes = [];
-    const completedNotes = [];
-
-    document.querySelectorAll('.todo-item p').forEach(savedNote => {
-      if (!completedTasks.includes(savedNote.textContent)) {
-        notes.push(savedNote.textContent);
-      } else {
-        completedNotes.push(savedNote.textContent);
-      }
-    });
-
+    const notes = [...main.querySelectorAll('.todo-item p')].map(note => note.textContent);
     localStorage.setItem('notes', JSON.stringify(notes));
-    localStorage.setItem('completedNotes', JSON.stringify(completedNotes));
   }
-
 
   function loadNotes() {
+    savedNotes.forEach(note => {
+      const todoItem = createTodoItem(note);
+      main.appendChild(todoItem.container);
+      todoItem.checkbox.addEventListener('click', markAsComplete);
+    });
 
-    if (savedNotes) {
-      const notes = JSON.parse(savedNotes);
-      notes.forEach(note => {
-        const divContainer = document.createElement('div');
-        divContainer.setAttribute('class', 'todo-column');
-        const divColumn = document.createElement('div');
-        divColumn.setAttribute('class', 'todo-item');
-
-        const inputCheckbox = document.createElement('input');
-        inputCheckbox.setAttribute('class', 'checkbox');
-        inputCheckbox.setAttribute('type', 'checkbox');
-        inputCheckbox.addEventListener('click', deleteNote);
-
-        const noteElement = document.createElement('p');
-        noteElement.textContent = note;
-
-        const date = document.createElement('input');
-        date.setAttribute('class', 'date');
-        date.setAttribute('type', 'date');
-
-        divColumn.appendChild(inputCheckbox);
-        divColumn.appendChild(noteElement);
-        divColumn.appendChild(date);
-
-        divContainer.appendChild(divColumn);
-        main.appendChild(divContainer);
-      });
-      console.log(savedNotes, 'saved')
-      console.log(savedCompletedNotes, 'complete')
-    }
-
-    if (savedCompletedNotes) {
-      console.log(savedNotes, 'saved')
-      console.log(savedCompletedNotes, 'complete')
-
-
-
-      const completedNotes = JSON.parse(savedCompletedNotes);
-      completedNotes.forEach(note => {
-        const divContainer = document.createElement('div');
-        divContainer.setAttribute('class', 'todo-column');
-        const divColumn = document.createElement('div');
-        divColumn.setAttribute('class', 'todo-item');
-
-        const inputCheckbox = document.createElement('input');
-        inputCheckbox.setAttribute('class', 'checkbox2');
-        inputCheckbox.setAttribute('type', 'checkbox');
-        inputCheckbox.checked = true;
-        inputCheckbox.addEventListener('click', deleteNote);
-
-        
-
-        const noteElement = document.createElement('del');
-        noteElement.setAttribute('class', 'completeNotes')
-        noteElement.textContent = note;
-        
-
-        const date = document.createElement('input');
-        date.setAttribute('class', 'date');
-        date.setAttribute('type', 'date');
-
-        divColumn.appendChild(inputCheckbox);
-        divColumn.appendChild(noteElement);
-        divColumn.appendChild(date);
-
-        divContainer.appendChild(divColumn);
-        completeTodo.appendChild(divContainer);
-      });
-    }
+    savedCompletedNotes.forEach(note => {
+      const todoItem = createTodoItem(note);
+      todoItem.checkbox.checked = true; // Mark as completed
+      completeTodo.appendChild(todoItem.container);
+    });
   }
+
+  function markAsComplete() {
+    const todoItem = this.parentElement.parentElement;
+    const noteText = todoItem.querySelector('p').textContent;
+  
+    if (this.checked) {
+      savedCompletedNotes.push(noteText);
+      localStorage.setItem('completedNotes', JSON.stringify(savedCompletedNotes));
+  
+      const index = savedNotes.indexOf(noteText);
+      if (index !== 0) {
+        savedNotes.splice(index, 1);
+        localStorage.setItem('notes', JSON.stringify(savedNotes));
+      }
+  
+      main.removeChild(todoItem.container); // Remove from todo container
+      completeTodo.appendChild(todoItem.container); // Move to complete container
+    } else {
+      const index = savedCompletedNotes.indexOf(noteText);
+      if (index !== 0) {
+        savedCompletedNotes.splice(index, 1);
+        localStorage.setItem('completedNotes', JSON.stringify(savedCompletedNotes));
+      }
+  
+      completeTodo.removeChild(todoItem.container); // Remove from complete container
+      main.appendChild(todoItem.container); // Move back to todo container
+    }
+  
+    // Reload the page
+
+  }
+  
 });
