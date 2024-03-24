@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes App</title>
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 5px;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+}
+
+  </style>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Notes App</h1>
+    <textarea id="noteInput" placeholder="Enter your note..."></textarea>
+    <button id="addNoteBtn">Add Note</button>
+    <ul id="notesList"></ul>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+  const noteInput = document.getElementById('noteInput');
+  const addNoteBtn = document.getElementById('addNoteBtn');
+  const notesList = document.getElementById('notesList');
+
+  addNoteBtn.addEventListener('click', addNote);
+
+  // Load notes from local storage on page load
+  loadNotes();
+
+  function addNote() {
+    const noteText = noteInput.value.trim();
+    if (noteText !== '') {
+      const noteItem = document.createElement('li');
+      noteItem.textContent = noteText;
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.classList.add('delete-btn');
+      deleteBtn.addEventListener('click', deleteNote);
+      noteItem.appendChild(deleteBtn);
+      notesList.appendChild(noteItem);
+
+      // Save note to local storage
+      saveNotes();
+
+      noteInput.value = '';
+    } else {
+      alert('Please enter a note.');
+    }
+  }
+
+  function deleteNote() {
+    this.parentElement.remove();
+
+    // Save notes to local storage after deleting
+    saveNotes();
+  }
+
+  function saveNotes() {
+    const notes = [];
+    document.querySelectorAll('#notesList li').forEach(note => {
+      notes.push(note.textContent);
+    });
+    localStorage.setItem('notes', JSON.stringify(notes));
+  }
+
+  function loadNotes() {
+    const savedNotes = localStorage.getItem('notes');
+    if (savedNotes) {
+      const notes = JSON.parse(savedNotes);
+      notes.forEach(note => {
+        const noteItem = document.createElement('li');
+        noteItem.textContent = note;
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.classList.add('delete-btn');
+        deleteBtn.addEventListener('click', deleteNote);
+        noteItem.appendChild(deleteBtn);
+        notesList.appendChild(noteItem);
+      });
+    }
+  }
+});
+
+  </script>
+</body>
+</html>
