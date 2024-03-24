@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
     inputCheckbox.addEventListener('click', () => {
       window.location.reload();
     });
-    
 
     const label = document.createElement('label');
     label.setAttribute('for', 'checkbox');
@@ -49,16 +48,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const noteElement = document.createElement('p');
     noteElement.textContent = noteText;
 
-    const date = document.createElement('input');
-    date.classList.add('date');
-    date.setAttribute('type', 'date');
+    const span = document.createElement('span');
+    span.innerHTML = "\u00d7";
+
+    span.addEventListener('click', (e) => {
+      if (e.target.tagName === 'SPAN') {
+        const todoItem = e.target.parentElement.parentElement;
+        main.removeChild(todoItem); // Remove from todo container
+        completeTodo.removeChild(todoItem); // Remove from complete container
+        saveNotes(); // Update savedNotes
+      }
+    });
 
     roundDiv.appendChild(inputCheckbox);
     roundDiv.appendChild(label);
 
     divColumn.appendChild(roundDiv);
     divColumn.appendChild(noteElement);
-    divColumn.appendChild(date);
+    divColumn.appendChild(span);
 
     divContainer.appendChild(divColumn);
 
@@ -87,32 +94,39 @@ document.addEventListener('DOMContentLoaded', function () {
   function markAsComplete() {
     const todoItem = this.parentElement.parentElement;
     const noteText = todoItem.querySelector('p').textContent;
-  
+
     if (this.checked) {
       savedCompletedNotes.push(noteText);
       localStorage.setItem('completedNotes', JSON.stringify(savedCompletedNotes));
-  
+
       const index = savedNotes.indexOf(noteText);
-      if (index !== 0) {
+      if (index !== -1) {
         savedNotes.splice(index, 1);
         localStorage.setItem('notes', JSON.stringify(savedNotes));
       }
-  
-      main.removeChild(todoItem.container); // Remove from todo container
-      completeTodo.appendChild(todoItem.container); // Move to complete container
+
+      main.removeChild(todoItem); // Remove from todo container
+      completeTodo.appendChild(todoItem); // Move to complete container
     } else {
       const index = savedCompletedNotes.indexOf(noteText);
-      if (index !== 0) {
+      if (index !== -1) {
         savedCompletedNotes.splice(index, 1);
         localStorage.setItem('completedNotes', JSON.stringify(savedCompletedNotes));
       }
-  
-      completeTodo.removeChild(todoItem.container); // Remove from complete container
-      main.appendChild(todoItem.container); // Move back to todo container
-    }
-  
-    // Reload the page
 
+      completeTodo.removeChild(todoItem); // Remove from complete container
+      main.appendChild(todoItem); // Move back to todo container
+      
+    }
+    
+    window.location.reload(); // Reload the page
   }
+
   
 });
+
+function deleteAll(){
+  localStorage.clear()
+  alert('deleted')
+  window.location.reload()
+}
